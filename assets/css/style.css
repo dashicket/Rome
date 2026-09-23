@@ -6,6 +6,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Rome Paperlogy";
+  src: url("../fonts/paperlogy-bold.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
 /* Design tokens shared by the landing page and all content pages. */
 :root {
   --color-ink: #211d19;
@@ -19,6 +27,9 @@
   --color-gold: #947047;
   --color-gold-dark: #765538;
   --color-dark: #1f1a17;
+  --color-phone: #403329;
+  --color-phone-hover: #574335;
+  --color-phone-border: #78614e;
   --nav-glass-ink: #4f3926;
   --color-banner-red: #650909;
   --color-banner-red-light: #a31919;
@@ -47,6 +58,7 @@
     Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", Arial,
     sans-serif;
   --font-sans: "Rome Pretendard", var(--font-sans-fallback);
+  --font-paperlogy: "Rome Paperlogy", var(--font-sans-fallback);
   --font-serif:
     "Iowan Old Style", "Palatino Linotype", "Noto Serif KR", Batang,
     "Times New Roman", serif;
@@ -64,6 +76,7 @@
   box-sizing: border-box;
 }
 html {
+  scrollbar-gutter: stable;
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--header-height) + 24px);
 }
@@ -404,12 +417,12 @@ summary:focus-visible {
 }
 .header-consult-link--phone {
   color: #fff;
-  background: #403329;
-  border-color: #78614e;
+  background: var(--color-phone);
+  border-color: var(--color-phone-border);
   text-shadow: none;
 }
 .header-consult-link--phone:hover {
-  background: #574335;
+  background: var(--color-phone-hover);
 }
 .menu-toggle {
   position: relative;
@@ -1619,6 +1632,92 @@ summary:focus-visible {
 }
 .consult-dialog__status {
   margin: 18px 0 0;
+}
+.consult-dialog.consult-dialog--redirect {
+  width: min(400px, calc(100% - 40px));
+  padding: var(--space-lg) var(--space-md);
+  text-align: center;
+}
+.consult-dialog--redirect::before {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+}
+.consult-dialog--redirect::before {
+  inset: 10px;
+  border: 1px solid var(--color-line-strong);
+  border-radius: var(--radius-sm);
+}
+.consult-dialog--redirect .consult-dialog__close {
+  z-index: 1;
+  top: 16px;
+  right: 16px;
+  width: 28px;
+  height: 28px;
+  color: var(--color-phone);
+  background: var(--color-paper);
+  border-radius: var(--radius-sm);
+}
+.consult-dialog.consult-dialog--redirect h2 {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--space-xs);
+  margin: var(--space-xs) 0 var(--space-md);
+  font-family: var(--font-paperlogy);
+  font-size: 22px;
+  font-weight: 700;
+}
+.consult-dialog--redirect p[data-phone-unavailable] {
+  color: var(--color-banner-red-light);
+  font-size: 13px;
+}
+.consult-dialog--redirect .consult-dialog__channels {
+  margin-top: calc(var(--space-md) + var(--space-xs));
+}
+.consult-dialog--redirect .consult-channel {
+  gap: var(--space-xs);
+  min-height: 48px;
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--text-sm);
+}
+.consult-dialog--redirect .consult-channel--kakao {
+  color: var(--color-paper);
+  background: var(--color-phone);
+  border: 1px solid var(--color-phone-border);
+}
+.consult-dialog--redirect .consult-channel--kakao:hover {
+  background: var(--color-phone-hover);
+}
+.consult-dialog--redirect .consult-channel[aria-disabled="true"] {
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.65);
+  background: var(--color-phone);
+}
+.consult-dialog--redirect .consult-dialog__status {
+  margin-top: var(--space-sm);
+}
+.consult-dialog__countdown {
+  flex: 0 0 auto;
+}
+.consult-dialog__countdown strong {
+  color: var(--color-banner-red-light);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.consult-dialog__status strong {
+  color: var(--color-gold-dark);
+  font-weight: 600;
+}
+.consult-channel[role="button"] {
+  cursor: pointer;
+}
+.consult-channel[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: default;
+  text-decoration: none;
 }
 @media (max-width: 560px) {
   .consult-dialog {

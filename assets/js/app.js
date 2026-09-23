@@ -32,10 +32,8 @@
       }
       return "";
     }
-    const phone = String(config.phoneNumber || "").replace(/[\s()-]/g, "");
     const channels = {
       kakao: validUrl(config.kakaoUrl),
-      phone: /^\+?\d{7,15}$/.test(phone) ? `tel:${phone}` : "",
     };
     const consultationLinks = $$("[data-consult-link]");
     if (consultationLinks.length) {
@@ -54,6 +52,88 @@
         </div>
         <p class="consult-dialog__status" role="status" hidden></p>`;
       document.body.append(dialog);
+      const phoneDialog = document.createElement("dialog");
+      phoneDialog.className = "consult-dialog consult-dialog--redirect";
+      phoneDialog.id = "phone-consultation";
+      phoneDialog.setAttribute("aria-labelledby", "phone-consult-title");
+      phoneDialog.setAttribute("aria-describedby", "phone-consult-description");
+      phoneDialog.innerHTML = `<button class="consult-dialog__close" type="button" aria-label="전화 상담 안내 닫기"><svg class="icon icon--line" aria-hidden="true"><use href="assets/icons/lucide-sprite.svg#icon-x"></use></svg></button>
+        <h2 id="phone-consult-title"><span class="consult-dialog__countdown" data-phone-countdown role="timer"><strong>3</strong></span><span>초 후 카카오톡 상담 연결</span></h2>
+        <p id="phone-consult-description">전화 상담이 몰리고 있어<br>카카오톡으로 문의를 받고 있어요.</p>
+        <div class="consult-dialog__channels">
+          <a class="consult-channel consult-channel--kakao" data-phone-redirect><img src="assets/icons/kakaotalk-symbol.png" width="26" height="26" alt="">카카오톡으로 문의하기<svg class="icon icon--line" aria-hidden="true"><use href="assets/icons/lucide-sprite.svg#icon-chevron-right"></use></svg></a>
+        </div>
+        <p class="consult-dialog__status" data-phone-unavailable role="status" hidden>카카오톡 상담에 연결할 수 없습니다.</p>`;
+      document.body.append(phoneDialog);
+      const redirectLink = $("[data-phone-redirect]", phoneDialog);
+      const countdown = $("[data-phone-countdown]", phoneDialog);
+      const phoneUnavailable = $("[data-phone-unavailable]", phoneDialog);
+      let redirectTimer;
+      const stopRedirect = () => clearInterval(redirectTimer);
+      const closePhoneDialog = () => {
+        stopRedirect();
+        phoneDialog.close();
+      };
+      if (channels.kakao) {
+        redirectLink.href = channels.kakao;
+        // Use the current tab so automatic navigation works without a popup.
+        redirectLink.addEventListener("click", closePhoneDialog);
+      } else {
+        redirectLink.setAttribute("role", "link");
+        redirectLink.setAttribute("aria-disabled", "true");
+      }
+      $(".consult-dialog__close", phoneDialog).addEventListener("click", closePhoneDialog);
+      phoneDialog.addEventListener("cancel", stopRedirect);
+      phoneDialog.addEventListener("close", stopRedirect);
+      phoneDialog.addEventListener("click", (event) => {
+        const bounds = phoneDialog.getBoundingClientRect();
+        if (event.target === phoneDialog &&
+          (event.clientX < bounds.left || event.clientX > bounds.right ||
+            event.clientY < bounds.top || event.clientY > bounds.bottom)) {
+          closePhoneDialog();
+        }
+      });
+      window.addEventListener("pagehide", closePhoneDialog);
+      const openPhoneDialog = (event) => {
+        event.preventDefault();
+        if (phoneDialog.open) return;
+        if (event.currentTarget.closest("[data-mobile-menu]") &&
+          document.body.classList.contains("menu-open")) {
+          $("[data-menu-toggle]").click();
+        }
+        if (dialog.open) dialog.close();
+        stopRedirect();
+        let seconds = 3;
+        $("strong", countdown).textContent = seconds;
+        phoneUnavailable.hidden = true;
+        phoneDialog.showModal();
+        redirectTimer = setInterval(() => {
+          seconds -= 1;
+          $("strong", countdown).textContent = seconds;
+          if (seconds === 0) {
+            stopRedirect();
+            if (channels.kakao) {
+              closePhoneDialog();
+              window.location.assign(channels.kakao);
+            } else {
+              phoneUnavailable.hidden = false;
+            }
+          }
+        }, 1000);
+      };
+      const configurePhoneDialog = (link) => {
+        link.removeAttribute("href");
+        link.removeAttribute("target");
+        link.removeAttribute("rel");
+        link.setAttribute("role", "button");
+        link.setAttribute("tabindex", "0");
+        link.setAttribute("aria-haspopup", "dialog");
+        link.setAttribute("aria-controls", phoneDialog.id);
+        link.addEventListener("click", openPhoneDialog);
+        link.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") openPhoneDialog(event);
+        });
+      };
       const channelNotice = document.createElement("p");
       channelNotice.className = "consult-channel-notice";
       channelNotice.setAttribute("role", "status");
@@ -80,6 +160,10 @@
       };
       $$("[data-channel-choice]", dialog).forEach((link) => {
         const channel = link.dataset.channelChoice;
+        if (channel === "phone") {
+          configurePhoneDialog(link);
+          return;
+        }
         if (channels[channel]) configureDestination(link, channels[channel]);
         else {
           link.href = "#consultation";
@@ -105,6 +189,10 @@
       });
       consultationLinks.forEach((link) => {
         const channel = link.dataset.consultChannel;
+        if (channel === "phone") {
+          configurePhoneDialog(link);
+          return;
+        }
         if (channels[channel]) {
           configureDestination(link, channels[channel]);
           return;

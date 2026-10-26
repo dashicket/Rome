@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://로마티켓.com/sitemap.xml

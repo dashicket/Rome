@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Rome Ticket">
+  <defs>
+    <!-- Category stone finish, with a broader top-left light for small favicon sizes. -->
+    <linearGradient id="stone-shade" x2="0" y2="1">
+      <stop stop-color="#986c42" stop-opacity=".26"/>
+      <stop offset=".48" stop-color="#000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".32"/>
+    </linearGradient>
+    <linearGradient id="stone-sheen" x1="2.8%" y1="-2.4%" x2="97.2%" y2="102.4%">
+      <stop offset=".38" stop-color="#fff" stop-opacity="0"/>
+      <stop offset=".46" stop-color="#fff" stop-opacity=".07"/>
+      <stop offset=".53" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="stone-light" cx="8%" cy="4%" r="90%">
+      <stop stop-color="#fff4df" stop-opacity=".36"/>
+      <stop offset=".35" stop-color="#fff4df" stop-opacity=".18"/>
+      <stop offset=".7" stop-color="#fff4df" stop-opacity=".05"/>
+      <stop offset="1" stop-color="#fff4df" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="tile"><rect width="64" height="64" rx="10"/></clipPath>
+  </defs>
+  <g clip-path="url(#tile)">
+    <path fill="#30251b" d="M0 0h64v64H0z"/>
+    <path fill="url(#stone-shade)" d="M0 0h64v64H0z"/>
+    <path fill="url(#stone-sheen)" d="M0 0h64v64H0z"/>
+    <path fill="url(#stone-light)" d="M0 0h64v64H0z"/>
+  </g>
+  <!-- Crisp filled outline: no font dependency, raster texture, blur or stroke. -->
+  <path fill="#fff" fill-rule="evenodd" d="M20 14h14c9 0 14 5 14 12 0 6-3 10-8 12l10 12h-9L30 37h-3v13h-7V14Zm7 7v10h7c5 0 7-2 7-5s-2-5-7-5h-7Z"/>
+</svg>

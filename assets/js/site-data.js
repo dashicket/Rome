@@ -3,7 +3,7 @@ window.ROME_TICKET = {
     brand: "로마티켓",
     // Set the official RomeTicket consultation URL when the channel is available.
     consultationUrl: "",
-    kakaoUrl: "",
+    kakaoUrl: "https://vvd.im/rmtk",
     phoneNumber: "",
     consultationLabel: "빠른 상담 연결",
     businessName: "로마티켓",
